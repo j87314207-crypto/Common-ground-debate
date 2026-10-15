@@ -1,0 +1,27 @@
+# Render Blueprint for Common Ground — https://render.com/docs/blueprint-spec
+# Deploy: push this repo to GitHub, then in Render → New → Blueprint → connect the repo.
+# NOTE: the free plan has an ephemeral filesystem, so the SQLite database
+# (./data/debates.db) resets on redeploys/restarts. For persistent data, add a
+# Render disk (requires a paid instance) or migrate to Postgres later.
+# Disk option (paid plans only) — uncomment to use:
+#    disk:
+#      name: debate-data
+#      mountPath: /opt/render/project/src/data
+#      sizeGB: 1
+
+services:
+  - type: web
+    name: common-ground
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: STRIPE_SECRET_KEY
+        sync: false # paste sk_live_... in Render dashboard (or leave empty for now)
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false # paste whsec_... after creating the webhook endpoint
